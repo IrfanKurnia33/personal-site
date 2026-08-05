@@ -1,0 +1,20 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHeader from "../components/PageHeader.astro";
+import SocialLinks from "../components/SocialLinks.astro";
+---
+
+<BaseLayout
+  title="Socials"
+  description="Where I am outside of this website"
+>
+  <div class="prose-container">
+    <PageHeader
+      eyebrow="Socials"
+      title="Where I am outside of this website"
+      lead="All my profiles in one place."
+    />
+
+    <SocialLinks variant="list" />
+  </div>
+</BaseLayout>

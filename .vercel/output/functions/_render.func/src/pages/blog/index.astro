@@ -1,0 +1,169 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageHeader from "../../components/PageHeader.astro";
+import PostCard from "../../components/PostCard.astro";
+
+const isProd = import.meta.env.PROD;
+const posts = (await getCollection("blog"))
+  .filter((p) => !isProd || !p.data.draft)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const PER_PAGE = 5;
+const pageCount = Math.ceil(posts.length / PER_PAGE);
+---
+
+<BaseLayout
+  title="Blog"
+  description="Jotting down my screams, one sentence at a time."
+>
+  <div class="container">
+    <PageHeader
+      eyebrow="Blog"
+      title="Erratic Thoughts and More"
+      lead="Jotting down my screams, one sentence at a time."
+    />
+
+    {
+      posts.length === 0 ? (
+        <p>No posts yet — check back soon.</p>
+      ) : (
+        <div class="post-grid" data-per-page={PER_PAGE}>
+          {posts.map((post, i) => (
+            <div class="post-item" data-index={i} hidden={i >= PER_PAGE}>
+              <PostCard post={post} />
+            </div>
+          ))}
+        </div>
+      )
+    }
+
+    {
+      pageCount > 1 && (
+        <nav class="pagination" aria-label="Blog pagination">
+          <button class="pagination__btn" data-page-prev disabled>
+            ← Prev
+          </button>
+          <div class="pagination__pages">
+            {Array.from({ length: pageCount }, (_, i) => (
+              <button
+                class="pagination__num"
+                data-page-num={i + 1}
+                aria-current={i === 0 ? "page" : undefined}
+              >
+                {i + 1}
+              </button>
+            ))}
+          </div>
+          <button class="pagination__btn" data-page-next>
+            Next →
+          </button>
+        </nav>
+      )
+    }
+  </div>
+</BaseLayout>
+
+<script>
+  const grid = document.querySelector<HTMLElement>(".post-grid");
+  const pagination = document.querySelector<HTMLElement>(".pagination");
+
+  if (grid && pagination) {
+    const perPage = Number(grid.dataset.perPage) || 5;
+    const items = Array.from(
+      grid.querySelectorAll<HTMLElement>(".post-item"),
+    );
+    const pageCount = Math.ceil(items.length / perPage);
+    const prevBtn =
+      pagination.querySelector<HTMLButtonElement>("[data-page-prev]");
+    const nextBtn =
+      pagination.querySelector<HTMLButtonElement>("[data-page-next]");
+    const numBtns = Array.from(
+      pagination.querySelectorAll<HTMLButtonElement>("[data-page-num]"),
+    );
+
+    let current = 1;
+
+    const render = () => {
+      const start = (current - 1) * perPage;
+      const end = start + perPage;
+      items.forEach((item, i) => {
+        item.hidden = i < start || i >= end;
+      });
+      numBtns.forEach((btn) => {
+        const page = Number(btn.dataset.pageNum);
+        if (page === current) {
+          btn.setAttribute("aria-current", "page");
+        } else {
+          btn.removeAttribute("aria-current");
+        }
+      });
+      if (prevBtn) prevBtn.disabled = current === 1;
+      if (nextBtn) nextBtn.disabled = current === pageCount;
+    };
+
+    const goTo = (page: number) => {
+      current = Math.min(Math.max(page, 1), pageCount);
+      render();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+
+    prevBtn?.addEventListener("click", () => goTo(current - 1));
+    nextBtn?.addEventListener("click", () => goTo(current + 1));
+    numBtns.forEach((btn) =>
+      btn.addEventListener("click", () =>
+        goTo(Number(btn.dataset.pageNum)),
+      ),
+    );
+  }
+</script>
+
+<style>
+  .post-grid {
+    display: grid;
+    grid-template-columns: 1;
+    gap: var(--space-m);
+    /* grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr)); */
+  }
+
+  .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+    margin-top: var(--space-xl);
+  }
+  .pagination__pages {
+    display: inline-flex;
+    gap: var(--space-3xs);
+  }
+  .pagination__btn,
+  .pagination__num {
+    padding: var(--space-3xs) var(--space-xs);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-m);
+    background: transparent;
+    color: var(--text);
+    font: inherit;
+    font-size: var(--step--1);
+    cursor: pointer;
+    transition: border-color var(--transition);
+  }
+  .pagination__num {
+    min-width: 2.25rem;
+  }
+  .pagination__btn:hover:not(:disabled),
+  .pagination__num:hover {
+    border-color: var(--accent);
+  }
+  .pagination__num[aria-current="page"] {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: var(--bg);
+  }
+  .pagination__btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+</style>

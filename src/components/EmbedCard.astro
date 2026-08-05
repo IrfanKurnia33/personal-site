@@ -1,0 +1,112 @@
+---
+// Media card for music/podcast entries. Renders lazy iframe embeds when
+// `embeds`/`embed` URLs are provided, otherwise a simple link card. Plain share
+// links are converted to their embeddable form in src/lib/embeds.ts.
+import { resolveEmbeds } from "../lib/embeds.ts";
+
+interface Props {
+  title: string;
+  subtitle?: string;
+  kind?: string;
+  note?: string;
+  /** Single embed URL (kept for backward compatibility). */
+  embed?: string;
+  /** One or more embed URLs; takes precedence over `embed`. */
+  embeds?: string[];
+  href?: string;
+}
+const { title, subtitle, kind, note, embed, embeds, href } = Astro.props;
+
+const embedList = await resolveEmbeds(
+  embeds && embeds.length ? embeds : embed ? [embed] : [],
+);
+---
+
+<article class="embed-card">
+  <div class="embed-card__head">
+    <div>
+      {kind && <span class="tag">{kind}</span>}
+      <h3 class="embed-card__title">{title}</h3>
+      {subtitle && <p class="embed-card__subtitle mono">{subtitle}</p>}
+    </div>
+  </div>
+
+  {note && <p class="embed-card__note">{note}</p>}
+
+  {
+    embedList.length ? (
+      <div class="embed-card__frames">
+        {embedList.map((item) => (
+          <div
+            class:list={["embed-card__frame", item.height && "embed-card__frame--audio"]}
+            style={item.height ? `height:${item.height}px` : undefined}
+          >
+            <iframe
+              src={item.src}
+              title={title}
+              loading="lazy"
+              allow="encrypted-media; clipboard-write; picture-in-picture"
+              style="border:0"
+              allowfullscreen
+            />
+          </div>
+        ))}
+      </div>
+    ) : (
+      href && (
+        <a class="button button--ghost" href={href} target="_blank" rel="noopener">
+          Listen
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M7 17L17 7M7 7h10v10" />
+          </svg>
+        </a>
+      )
+    )
+  }
+</article>
+
+<style>
+  .embed-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-s);
+    padding: var(--space-m);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-m);
+    background: var(--surface);
+  }
+  .embed-card__title {
+    font-size: var(--step-1);
+    margin-top: var(--space-3xs);
+  }
+  .embed-card__subtitle {
+    color: var(--text-muted);
+    font-size: var(--step--1);
+  }
+  .embed-card__note {
+    color: var(--text-muted);
+    font-size: var(--step-0);
+  }
+  .embed-card__frames {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-s);
+  }
+  .embed-card__frame {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: var(--radius-s);
+    overflow: hidden;
+  }
+  /* Audio embeds (Spotify/SoundCloud) use a fixed height, not a video ratio. */
+  .embed-card__frame--audio {
+    aspect-ratio: auto;
+  }
+  .embed-card__frame iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+</style>

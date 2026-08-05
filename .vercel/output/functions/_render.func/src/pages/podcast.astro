@@ -1,0 +1,59 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHeader from "../components/PageHeader.astro";
+import EmbedCard from "../components/EmbedCard.astro";
+import Prose from "../components/Prose.astro";
+import { PODCASTS } from "../data/podcast.ts";
+
+const fmt = (iso?: string) =>
+  iso
+    ? new Date(iso).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      })
+    : undefined;
+---
+
+<BaseLayout
+  title="Podcast"
+  description="Where I yap sometimes."
+>
+  <div class="container">
+    <PageHeader
+      eyebrow="Podcast"
+      title="I talk about stuff sometimes"
+      lead="Where I yap sometimes."
+    />
+
+    <Prose>
+      <p>
+        Sometimes I appear on other people's podcasts, and sometimes I host my own. Here's some of my yapping (so far).
+      </p>
+    </Prose>
+
+    <div class="media-grid">
+      {
+        PODCASTS.map((item) => (
+          <EmbedCard
+            title={item.title}
+            subtitle={[item.show, fmt(item.date)].filter(Boolean).join(" · ")}
+            kind="Episode"
+            note={item.note}
+            embed={item.embed}
+            href={item.href}
+          />
+        ))
+      }
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .media-grid {
+    margin-top: var(--space-xl);
+    display: grid;
+    gap: var(--space-m);
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr));
+  }
+</style>

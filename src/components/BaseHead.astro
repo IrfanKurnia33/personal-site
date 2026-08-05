@@ -1,0 +1,84 @@
+---
+// Document <head> — meta tags, canonical URL, social cards, and the
+// no-flash theme script that MUST run before first paint.
+import { SITE } from "../consts.ts";
+import "../styles/global.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** Absolute or site-relative image for social cards. */
+  image?: string;
+  /** Set true on article pages for correct Open Graph type. */
+  article?: boolean;
+}
+
+const {
+  title,
+  description = SITE.description,
+  image = "/og-default.png",
+  article = false,
+} = Astro.props;
+
+const pageTitle = title ? `${title} — ${SITE.title}` : SITE.title;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const socialImage = new URL(image, Astro.site);
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="canonical" href={canonical} />
+<meta name="generator" content={Astro.generator} />
+
+<title>{pageTitle}</title>
+<meta name="description" content={description} />
+<meta name="author" content={SITE.author} />
+
+<!-- Open Graph / Twitter -->
+<meta property="og:type" content={article ? "article" : "website"} />
+<meta property="og:title" content={pageTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={socialImage} />
+<meta property="og:site_name" content={SITE.title} />
+<meta property="og:locale" content={SITE.locale} />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={pageTitle} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={socialImage} />
+
+<!-- Icons -->
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+<!-- Feed -->
+<link
+  rel="alternate"
+  type="application/rss+xml"
+  title={`${SITE.title} — Blog`}
+  href="/rss.xml"
+/>
+
+<!-- Theme color follows the active theme (set by the script below). -->
+<meta name="theme-color" content="#fafef5" id="theme-color-meta" />
+
+{/*
+  No-flash theme init. Runs synchronously in <head> before the body paints,
+  so the correct theme is applied on first render (no flash of wrong theme).
+  is:inline keeps Astro from bundling/deferring it.
+*/}
+<script is:inline>
+  (function () {
+    try {
+      var stored = localStorage.getItem("theme");
+      var prefersDark = window.matchMedia(
+        "(prefers-color-scheme: dark)"
+      ).matches;
+      var theme = stored || (prefersDark ? "dark" : "light");
+      document.documentElement.setAttribute("data-theme", theme);
+      var meta = document.getElementById("theme-color-meta");
+      if (meta) meta.setAttribute("content", theme === "dark" ? "#1d1d1d" : "#fafef5");
+    } catch (e) {
+      document.documentElement.setAttribute("data-theme", "light");
+    }
+  })();
+</script>

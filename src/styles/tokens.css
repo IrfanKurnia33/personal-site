@@ -1,0 +1,118 @@
+/* ==========================================================================
+   Design tokens — single source of truth for color, type, spacing.
+   Colors come from Irfan's palette. Light values live on :root; dark-mode
+   overrides live on [data-theme="dark"]. Toggled via the data-theme attribute
+   on <html> (see BaseHead.astro no-flash script + ThemeToggle).
+   ========================================================================== */
+
+:root {
+  /* --- Palette (raw) ------------------------------------------------------ */
+  --dark-1: #1d1d1d;
+  --dark-2: #343434;
+  --dark-3: #6c6c6c;
+  --dark-4: #a4a4a4;
+
+  --light-1: #fafef5;
+  --light-2: #d0d0d0;
+  --light-3: #b4b4b4;
+
+  --accent-50: #e3f1c7; /* Accent -3 */
+  --accent-100: #cee79e; /* Accent -2 */
+  --accent-200: #b9dd75; /* Accent -1 */
+  --accent-500: #8cbe2e; /* Accent    */
+  --accent-600: #5c7c1e; /* Accent  1 */
+  --accent-800: #2b3b0e; /* Accent  2 */
+
+  /* --- Semantic tokens: LIGHT (default) ----------------------------------- */
+  --bg: var(--light-1);
+  --surface: #ffffff;
+  --surface-2: #f2f6ec;
+  --border: var(--light-2);
+  --border-strong: var(--light-3);
+
+  --text: var(--dark-1);
+  --text-muted: var(--dark-3);
+  --text-subtle: var(--dark-4);
+
+  --accent: var(--accent-500);
+  --accent-hover: var(--accent-600);
+  /* Link/interactive text uses the darker accent for WCAG AA on light bg. */
+  --link: var(--accent-600);
+  --on-accent: var(--dark-1);
+  --accent-soft: var(--accent-50);
+
+  --selection-bg: var(--accent-200);
+  --selection-text: var(--dark-1);
+  --focus-ring: var(--accent-600);
+  --shadow: 0 1px 2px rgba(29, 29, 29, 0.06), 0 6px 20px rgba(29, 29, 29, 0.06);
+
+  /* Browser UI hint + native form controls follow the theme. */
+  --theme-color: var(--light-1);
+  color-scheme: light;
+
+  /* --- Typography --------------------------------------------------------- */
+  --font-heading: "Sora Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Hanken Grotesk Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Azeret Mono Variable", ui-monospace, "SFMono-Regular", monospace;
+
+  /* Fluid modular type scale (clamp: min .. preferred .. max). */
+  --step--1: clamp(0.83rem, 0.8rem + 0.16vw, 0.94rem);
+  --step-0: clamp(1rem, 0.95rem + 0.24vw, 1.13rem);
+  --step-1: clamp(1.15rem, 1.1rem + 0.4vw, 1.4rem);
+  --step-2: clamp(1.44rem, 1.31rem + 0.65vw, 2rem);
+  --step-3: clamp(1.73rem, 1.53rem + 1vw, 2.66rem);
+  --step-4: clamp(2.07rem, 1.78rem + 1.46vw, 3.55rem);
+  --step-5: clamp(2.49rem, 2.06rem + 2.14vw, 4.73rem);
+
+  --leading-tight: 1.15;
+  --leading-snug: 1.35;
+  --leading-normal: 1.65;
+
+  /* --- Spacing scale ------------------------------------------------------ */
+  --space-3xs: 0.25rem;
+  --space-2xs: 0.5rem;
+  --space-xs: 0.75rem;
+  --space-s: 1rem;
+  --space-m: 1.5rem;
+  --space-l: 2rem;
+  --space-xl: 3rem;
+  --space-2xl: 4.5rem;
+  --space-3xl: 7rem;
+
+  /* --- Layout & shape ----------------------------------------------------- */
+  --content-width: 48rem; /* prose / reading measure */
+  --wide-width: 48rem; /* grids / wide sections */
+  --radius-s: 6px;
+  --radius-m: 12px;
+  --radius-l: 20px;
+  --radius-full: 999px;
+
+  --transition: 160ms ease;
+}
+
+[data-theme="dark"] {
+  --bg: var(--dark-1);
+  --surface: var(--dark-2);
+  --surface-2: #2a2a2a;
+  --border: var(--dark-2);
+  --border-strong: var(--dark-3);
+
+  --text: var(--light-1);
+  --text-muted: var(--dark-4);
+  --text-subtle: var(--dark-3);
+
+  --accent: var(--accent-500);
+  --accent-hover: var(--accent-200);
+  /* Lighter accent for links so they pass AA on the dark background. */
+  --link: var(--accent-200);
+  --on-accent: var(--dark-1);
+  --accent-soft: rgba(140, 190, 46, 0.14);
+
+  --selection-bg: var(--accent-600);
+  --selection-text: var(--light-1);
+  --focus-ring: var(--accent-200);
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 6px 20px rgba(0, 0, 0, 0.35);
+
+  --theme-color: var(--dark-1);
+  color-scheme: dark;
+}

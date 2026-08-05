@@ -1,0 +1,19 @@
+# build output
+dist/
+.astro/
+
+# dependencies
+node_modules/
+
+# secrets — never commit the real Resend config
+public/config.php
+config.php
+.env
+.env.*
+!.env.example
+
+# logs & os
+npm-debug.log*
+*.log
+.DS_Store
+Thumbs.db

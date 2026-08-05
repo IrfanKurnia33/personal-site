@@ -1,0 +1,176 @@
+---
+import { getCollection, render } from "astro:content";
+import { Image } from "astro:assets";
+import type { GetStaticPaths } from "astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Prose from "../../components/Prose.astro";
+import FormattedDate from "../../components/FormattedDate.astro";
+
+export const prerender = true;
+
+export const getStaticPaths = (async () => {
+  const isProd = import.meta.env.PROD;
+  const posts = (await getCollection("blog"))
+    .filter((p) => !isProd || !p.data.draft)
+    .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+  return posts.map((post, i) => ({
+    params: { slug: post.id },
+    props: {
+      post,
+      prev: posts[i + 1] ?? null,
+      next: posts[i - 1] ?? null,
+    },
+  }));
+}) satisfies GetStaticPaths;
+
+const { post, prev, next } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, heroAlt, tags } =
+  post.data;
+const { Content } = await render(post);
+---
+
+<BaseLayout title={title} description={description} article={true}>
+  <article class="prose-container post">
+    <header class="post__header">
+      <a href="/blog/" class="post__back">← Back to blog</a>
+      <h1>{title}</h1>
+      <div class="post__meta">
+        <FormattedDate date={pubDate} />
+        {
+          updatedDate && (
+            <span class="post__updated">
+              · Updated <FormattedDate date={updatedDate} />
+            </span>
+          )
+        }
+        {
+          tags?.length > 0 && (
+            <span class="post__tags">
+              {tags.map((t) => (
+                <span class="tag">{t}</span>
+              ))}
+            </span>
+          )
+        }
+      </div>
+    </header>
+
+    {
+      heroImage && (
+        <Image
+          class="post__hero"
+          src={heroImage}
+          alt={heroAlt ?? ""}
+          width={1200}
+          height={630}
+        />
+      )
+    }
+
+    <Prose>
+      <Content />
+    </Prose>
+
+    <nav class="post__nav" aria-label="More posts">
+      {
+        prev ? (
+          <a href={`/blog/${prev.id}/`} class="post__nav-link">
+            <span class="post__nav-label">← Older</span>
+            <span class="post__nav-title">{prev.data.title}</span>
+          </a>
+        ) : (
+          <span />
+        )
+      }
+      {
+        next && (
+          <a href={`/blog/${next.id}/`} class="post__nav-link post__nav-link--next">
+            <span class="post__nav-label">Newer →</span>
+            <span class="post__nav-title">{next.data.title}</span>
+          </a>
+        )
+      }
+    </nav>
+  </article>
+</BaseLayout>
+
+<style>
+  .post__back {
+    display: inline-block;
+    margin-bottom: var(--space-m);
+    font-size: var(--step--1);
+    text-decoration: none;
+  }
+  .post__header h1 {
+    font-size: var(--step-4);
+  }
+  .post__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2xs);
+    margin-top: var(--space-s);
+    color: var(--text-muted);
+    font-size: var(--step--1);
+  }
+  .post__tags {
+    display: inline-flex;
+    gap: var(--space-3xs);
+  }
+  .post__hero {
+    width: 100%;
+    margin-block: var(--space-l);
+    border-radius: var(--radius-m);
+    border: 1px solid var(--border);
+    aspect-ratio: 1200 / 630;
+    object-fit: cover;
+  }
+  .post :global(.prose) {
+    margin-top: var(--space-l);
+  }
+  .post :global(.prose) p {
+    font-size: var(--step-1);
+  }
+  .post__nav {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-m);
+    margin-top: var(--space-2xl);
+    padding-top: var(--space-l);
+    border-top: 1px solid var(--border);
+  }
+  .post__nav-link {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3xs);
+    padding: var(--space-s);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-m);
+    text-decoration: none;
+    color: var(--text);
+    transition: border-color var(--transition);
+  }
+  .post__nav-link:hover {
+    border-color: var(--accent);
+  }
+  .post__nav-link--next {
+    text-align: right;
+  }
+  .post__nav-label {
+    font-size: var(--step--1);
+    color: var(--text-muted);
+  }
+  .post__nav-title {
+    font-family: var(--font-heading);
+    font-weight: 600;
+  }
+  @media (max-width: 40rem) {
+    .post__nav {
+      grid-template-columns: 1fr;
+    }
+    .post__nav-link--next {
+      text-align: left;
+    }
+  }
+</style>

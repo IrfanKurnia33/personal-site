@@ -1,0 +1,25 @@
+{
+  "name": "personal-site-2026",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Personal website for Mochammad Irfan Kurnia",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^4.2.6",
+    "@astrojs/rss": "^4.0.11",
+    "@astrojs/sitemap": "^3.4.0",
+    "@astrojs/vercel": "^8.2.11",
+    "@fontsource-variable/azeret-mono": "^5.2.5",
+    "@fontsource-variable/hanken-grotesk": "^5.2.5",
+    "@fontsource-variable/sora": "^5.2.5",
+    "astro": "^5.8.0",
+    "sharp": "^0.34.1"
+  }
+}

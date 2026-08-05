@@ -1,0 +1,32 @@
+---
+// Reusable page title block (eyebrow + heading + optional lead paragraph).
+interface Props {
+  eyebrow?: string;
+  title: string;
+  lead?: string;
+}
+const { eyebrow, title, lead } = Astro.props;
+---
+
+<header class="page-header">
+  {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+  <h1>{title}</h1>
+  {lead && <p class="page-header__lead">{lead}</p>}
+  <slot />
+</header>
+
+<style>
+  .page-header {
+    margin-bottom: var(--space-xl);
+  }
+  .page-header .eyebrow {
+    margin-bottom: var(--space-2xs);
+  }
+  .page-header__lead {
+    margin-top: var(--space-s);
+    max-width: 60ch;
+    font-size: var(--step-1);
+    color: var(--text-muted);
+    line-height: var(--leading-snug);
+  }
+</style>

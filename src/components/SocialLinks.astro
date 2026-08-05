@@ -1,0 +1,151 @@
+---
+// Renders social links from src/data/socials.ts. Two variants:
+//   variant="row"  → compact icon row (footer)
+//   variant="list" → labelled cards (Socials page)
+import { SOCIALS } from "../data/socials.ts";
+
+interface Props {
+  variant?: "row" | "list";
+}
+const { variant = "row" } = Astro.props;
+const items = SOCIALS.filter((s) => s.show !== false);
+
+// Inline icon paths keyed by Social.icon.
+const ICONS: Record<string, string> = {
+  mail: "M2.35693 7.714L9.33693 12.368C10.2999 13.009 10.7809 13.33 11.3009 13.455C11.7609 13.565 12.2399 13.565 12.6989 13.455C13.2189 13.33 13.6999 13.009 14.6629 12.368L21.6429 7.714M7.15693 19.5H16.8429C18.5229 19.5 19.3629 19.5 20.0049 19.173C20.569 18.8852 21.0276 18.4263 21.3149 17.862C21.6429 17.22 21.6429 16.38 21.6429 14.7V9.3C21.6429 7.62 21.6429 6.78 21.3159 6.138C21.0283 5.57354 20.5694 5.11462 20.0049 4.827C19.3629 4.5 18.5229 4.5 16.8429 4.5H7.15693C5.47693 4.5 4.63693 4.5 3.99493 4.827C3.43084 5.11479 2.97229 5.57369 2.68493 6.138C2.35693 6.78 2.35693 7.62 2.35693 9.3V14.7C2.35693 16.38 2.35693 17.22 2.68393 17.862C2.97155 18.4265 3.43047 18.8854 3.99493 19.173C4.63693 19.5 5.47693 19.5 7.15693 19.5Z",
+  github:
+    "M3.5 15.6681C3.95 15.7221 4.28333 15.9281 4.5 16.2861C4.826 16.8231 6.037 18.8121 7.413 18.8121H9.5M15.995 21.0001V17.2351C15.995 16.6631 15.7207 16.0178 15.172 15.2991C16.374 15.0491 17.465 14.6171 18.312 13.9831C19.76 12.8991 20.5 11.2251 20.5 9.57209C20.5 8.41209 20.06 7.32909 19.296 6.41209C18.871 5.90109 20.115 2.54009 19.01 3.05309C17.905 3.56709 16.285 4.25109 15.436 4.00009C14.527 3.73209 13.536 3.58409 12.5 3.58409C11.6 3.58409 10.734 3.69509 9.926 3.90109C8.752 4.19909 7.63 3.53809 6.5 3.05309C5.37 2.56909 5.987 6.06109 5.651 6.47509C4.921 7.38009 4.5 8.44009 4.5 9.57209C4.5 11.2251 5.395 12.8991 6.843 13.9821C7.808 14.7041 9.017 15.1651 10.37 15.3921M10.37 15.3911C9.79 16.0271 9.50033 16.6314 9.501 17.2041V21.0001",
+  linkedin:
+    "M8 7.625V8.125M8 16.375V10.75M12 16.375V13.5M12 13.5V10.75M12 13.5C12 12.212 13.222 11.5 14.4 11.5C16 11.5 16 12.875 16 14.375V16.375M3 9.4C3 7.16 3 6.04 3.436 5.184C3.81949 4.43139 4.43139 3.81949 5.184 3.436C6.04 3 7.16 3 9.4 3H14.6C16.84 3 17.96 3 18.816 3.436C19.5686 3.81949 20.1805 4.43139 20.564 5.184C21 6.04 21 7.16 21 9.4V14.6C21 16.84 21 17.96 20.564 18.816C20.1805 19.5686 19.5686 20.1805 18.816 20.564C17.96 21 16.84 21 14.6 21H9.4C7.16 21 6.04 21 5.184 20.564C4.43139 20.1805 3.81949 19.5686 3.436 18.816C3 17.96 3 16.84 3 14.6V9.4Z",
+  x: "M19.0001 4.00008L13.0701 10.9301M13.0701 10.9301L7.27505 4.34308C7.17426 4.23331 7.05144 4.14602 6.91463 4.08691C6.77782 4.02781 6.63008 3.99822 6.48105 4.00008H5.00705C4.17105 4.00008 3.70005 4.85008 4.21405 5.43508L10.9301 13.0701M13.0701 10.9301L19.7861 18.5651C20.3001 19.1501 19.8291 20.0001 18.9931 20.0001H17.5191C17.2081 20.0001 16.9151 19.8731 16.7251 19.6571L10.9301 13.0701M5.00005 20.0001L10.9301 13.0701",
+  instagram:
+    "M17 6.5H17.5M3 9.4C3 7.16 3 6.04 3.436 5.184C3.81949 4.43139 4.43139 3.81949 5.184 3.436C6.04 3 7.16 3 9.4 3H14.6C16.84 3 17.96 3 18.816 3.436C19.5686 3.81949 20.1805 4.43139 20.564 5.184C21 6.04 21 7.16 21 9.4V14.6C21 16.84 21 17.96 20.564 18.816C20.1805 19.5686 19.5686 20.1805 18.816 20.564C17.96 21 16.84 21 14.6 21H9.4C7.16 21 6.04 21 5.184 20.564C4.43139 20.1805 3.81949 19.5686 3.436 18.816C3 17.96 3 16.84 3 14.6V9.4ZM15.462 11.487C15.5294 11.9417 15.5065 12.4052 15.3947 12.8511C15.283 13.297 15.0845 13.7165 14.8106 14.0856C14.5367 14.4548 14.1928 14.7664 13.7985 15.0026C13.4042 15.2389 12.9672 15.3951 12.5125 15.4625C12.0578 15.5299 11.5943 15.507 11.1484 15.3952C10.7025 15.2835 10.283 15.085 9.91389 14.8111C9.16834 14.258 8.67306 13.4313 8.537 12.513C8.40094 11.5947 8.63526 10.6599 9.1884 9.91439C9.74154 9.16884 10.5682 8.67356 11.4865 8.5375C12.4048 8.40144 13.3396 8.63576 14.0851 9.1889C14.8307 9.74204 15.3259 10.5687 15.462 11.487Z",
+};
+---
+
+{
+  variant === "row" ? (
+    <ul class="social-row" role="list">
+      {items.map((s) => (
+        <li>
+          <a
+            href={s.href}
+            aria-label={s.label}
+            rel="me noopener"
+            target={s.href.startsWith("http") ? "_blank" : undefined}
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d={ICONS[s.icon]} />
+            </svg>
+          </a>
+        </li>
+      ))}
+    </ul>
+  ) : (
+    <ul class="social-list" role="list">
+      {items.map((s) => (
+        <li>
+          <a
+            href={s.href}
+            class="social-card"
+            rel="me noopener"
+            target={s.href.startsWith("http") ? "_blank" : undefined}
+          >
+            <span class="social-card__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d={ICONS[s.icon]} />
+              </svg>
+            </span>
+            <span class="social-card__text">
+              <span class="social-card__label">{s.label}</span>
+              <span class="social-card__handle mono">{s.handle}</span>
+            </span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  )
+}
+
+<style>
+  .social-row {
+    display: flex;
+    gap: var(--space-2xs);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .social-row a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.4rem;
+    height: 2.4rem;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    transition:
+      color var(--transition),
+      border-color var(--transition);
+  }
+  .social-row a:hover {
+    color: var(--accent-hover);
+    border-color: var(--accent);
+  }
+  .social-row svg {
+    width: 1.1rem;
+    height: 1.1rem;
+  }
+
+  .social-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+    gap: var(--space-s);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .social-card {
+    display: flex;
+    align-items: center;
+    gap: var(--space-s);
+    padding: var(--space-s);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-m);
+    background: var(--surface);
+    color: var(--text);
+    text-decoration: none;
+    transition:
+      border-color var(--transition),
+      transform var(--transition),
+      box-shadow var(--transition);
+  }
+  .social-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+  }
+  .social-card__icon {
+    display: inline-flex;
+    color: var(--accent-hover);
+  }
+  .social-card__icon svg {
+    width: 1.4rem;
+    height: 1.4rem;
+  }
+  .social-card__text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .social-card__label {
+    font-family: var(--font-heading);
+    font-weight: 600;
+  }
+  .social-card__handle {
+    font-size: var(--step--1);
+    color: var(--text-muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+</style>

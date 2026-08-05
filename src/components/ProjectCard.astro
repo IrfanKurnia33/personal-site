@@ -1,0 +1,98 @@
+---
+import { Image } from "astro:assets";
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  project: CollectionEntry<"projects">;
+}
+const { project } = Astro.props;
+const { title, description, year, tech, cover, coverAlt } = project.data;
+const href = `/projects/${project.id}/`;
+---
+
+<article class="project-card">
+  <a href={href} class="project-card__link">
+    {
+      cover && (
+        <div class="project-card__media">
+          <Image src={cover} alt={coverAlt ?? ""} width={800} height={500} />
+        </div>
+      )
+    }
+    <div class="project-card__body">
+      <div class="project-card__meta">
+        {year && <span class="mono">{year}</span>}
+      </div>
+      <h3 class="project-card__title">{title}</h3>
+      <p class="project-card__desc">{description}</p>
+      {
+        tech?.length > 0 && (
+          <ul class="project-card__tech" role="list">
+            {tech.map((t) => (
+              <li class="tag">{t}</li>
+            ))}
+          </ul>
+        )
+      }
+    </div>
+  </a>
+</article>
+
+<style>
+  .project-card {
+    height: 100%;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-m);
+    background: var(--surface);
+    overflow: hidden;
+    transition:
+      border-color var(--transition),
+      transform var(--transition),
+      box-shadow var(--transition);
+  }
+  .project-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow);
+  }
+  .project-card__link {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    color: var(--text);
+    text-decoration: none;
+  }
+  .project-card__media img {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+  }
+  .project-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xs);
+    padding: var(--space-m);
+  }
+  .project-card__meta {
+    font-size: var(--step--1);
+    color: var(--text-muted);
+  }
+  .project-card__title {
+    font-size: var(--step-1);
+  }
+  .project-card:hover .project-card__title {
+    color: var(--accent-hover);
+  }
+  .project-card__desc {
+    color: var(--text-muted);
+    font-size: var(--step--1);
+  }
+  .project-card__tech {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3xs);
+    list-style: none;
+    padding: 0;
+    margin-top: var(--space-2xs);
+  }
+</style>
