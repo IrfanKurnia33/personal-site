@@ -4,7 +4,7 @@ import PageHeader from "../components/PageHeader.astro";
 import Prose from "../components/Prose.astro";
 
 // Update this date whenever you refresh the page.
-const updated = new Date("2026-08-02").toLocaleDateString("en-US", {
+const updated = new Date("2026-09-03").toLocaleDateString("en-US", {
   year: "numeric",
   month: "long",
   day: "numeric",
@@ -25,10 +25,14 @@ const updated = new Date("2026-08-02").toLocaleDateString("en-US", {
     <p class="now-updated mono">Last updated {updated} — from Jakarta, Indonesia</p>
 
     <Prose>
-      <h2>🧑‍💻 Career Transition</h2>
+      <h2>🧑‍💻 Current Role + Transition</h2>
       <p>
         Professionally, I'm a design generalist, designing print and digital materials for various business use in multiple industries. Currently working at a Madrid-based company Dicoded (not a typo).
       </p>
+      <p>
+        In my current role, I'm designing 0-to-1 products, marketing materials, and software interfaces. Two big projects I'm currently involved in are a GCC real estate <a href="https://thedealreport.co/" target="_blank">media platform</a> and an <a href="https://privilegegarden.pt/" target="_blank">apartment complex</a> in Portugal.
+      </p>
+      <h3>Transitioning into AI</h3>
       <p>
         I'm currently teaming up with my friend Fiqi to take an AI Engineering bootcamp on Udemy. We hope to break into the AI field as a junior-level engineer to help companies implement AI effectively. It's a slow process as I still prioritize my design work on a daily basis.
       </p>
@@ -37,17 +41,28 @@ const updated = new Date("2026-08-02").toLocaleDateString("en-US", {
       </p>
 
       <h2>👩‍❤️‍👨 Life</h2>
-      <img src="/blog-images/with-wifey.jpg" alt="Me and my wife wearing our England shirts" />
+      <figure>
+        <img src="/blog-images/with-wifey.jpg" alt="Me and my wife wearing our England shirts" />
+        <figcaption>Me and my wife wearing our England shirts</figcaption>
+      </figure>
       <p>
-        Currently living a quite slow-paced life with my lovely wife and Batman (my latest stray cat coming into our home). We're both working from Monday to Friday, then spend weekends at padel courts, parents' homes, and probably weddings of our friends.
+        Currently living a quite slow-paced life with my lovely wife + Batman and Doyen (the latest stray cats coming into our home). We're both working from Monday to Friday, then spend weekends at padel courts, parents' homes, and probably weddings of our friends.
       </p>
+
+      <h3>🗓️ Current Weekend Favorites</h3>
+      <ul>
+        <li>🎾 Padel or Tennis</li>
+        <li>📺 Ted Lasso</li>
+        <li>🃏 Mahjong and Board Games</li>
+        <li>🎤 Karaoke on Roblox</li>
+      </ul>
       
       <h2>🧘🏼‍♂️ Website</h2>
       <p>
         The "🧘🏼‍♂️" emoji represents my newly-discovered commitment to rebuild and maintain a website that is truly my "corner of the internet".
       </p>
       <p>
-        For years, my website purely serves as a design portfolio to attract recruiters and design managers. But lately, after meeting <a href="https://sive.rs" target="_blank">Derek</a> (the guy behind <a href="https://nownownow.com/" target="_blank">NowNowNow</a>), I felt like it's time to turn my website back to something that truly reflects who I am. And it's been rewarding so far.
+        For years, my website purely serves as a design portfolio to attract recruiters and design managers. But lately, after meeting <a href="/blog/derek/" target="_blank">Derek</a> (the guy behind <a href="https://nownownow.com/" target="_blank">NowNowNow</a>), I felt like it's time to turn my website back to something that truly reflects who I am. And it's been rewarding so far.
       </p>
 
       <h2>🎼 Music</h2>
@@ -55,10 +70,12 @@ const updated = new Date("2026-08-02").toLocaleDateString("en-US", {
         I'm writing songs again! Ever since I got laid-off from my day job, I can have slow mornings with my favorite breakfast of chicken porridge, coffee, and my notepad. Hopefully I can come up with something soon enough.
       </p>
 
-      <h2>🔫 Delta Force</h2>
-      <p>
-        Currently hooked on playing Delta Force on my PC with some of my friends.
-      </p>
+      <h2>📚 Currently Reading</h2>
+      <ul>
+        <li>"Madilog" by Tan Malaka</li>
+        <li>"The Things You Can See Only When You Slow Down" by Haemin Sunim</li>
+        <li>"Ketika Qur'an Jatuh Di Hati Hamba Yang Merasa Biasa" by Nadirsyah Hosen</li>
+      </ul>
     </Prose>
   </div>
 </BaseLayout>

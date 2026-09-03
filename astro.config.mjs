@@ -5,6 +5,7 @@ import sitemap from "@astrojs/sitemap";
 import vercel from "@astrojs/vercel";
 
 import { SITE } from "./src/consts.ts";
+import rehypeImageCaptions from "./src/lib/rehype-image-captions.ts";
 
 // https://astro.build/config
 export default defineConfig({
@@ -21,6 +22,9 @@ export default defineConfig({
 
   adapter: vercel(),
   integrations: [mdx(), sitemap()],
+  markdown: {
+    rehypePlugins: [rehypeImageCaptions],
+  },
 
   // Prefer inlined small stylesheets to cut requests on serverless deployments.
   vite: {

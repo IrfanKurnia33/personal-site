@@ -61,6 +61,10 @@
   border: 1px solid var(--border);
 }
 
+.prose figure {
+  margin-inline: 0;
+}
+
 .prose figure figcaption {
   margin-block-start: var(--space-2xs);
   font-size: var(--step--1);

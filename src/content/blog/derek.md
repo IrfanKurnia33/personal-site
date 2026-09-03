@@ -2,7 +2,7 @@
 title: "Meeting Derek Sivers"
 description: "He's a legit awesome guy and the one who inspired me to write more"
 pubDate: 2026-07-12
-tags: ["autobiography"]
+tags: ["people"]
 ---
 
 Back in 2021, I discovered this thing called [NowNowNow](https://nownownow.com/) where instead of having a full-blown "About Me" page, people just have a page about *what they're up to these days* (Read more about what it is [here](https://nownownow.com/about)).
@@ -19,7 +19,7 @@ So I kinda forgot about it. Maybe once in a few months I get to update my "Now" 
 
 Then just last month, Derek sent an email telling me that he's coming to Jakarta and looking forward to meet some new people. I immediately said yes.
 
-![with Derek Sivers](/blog-images/derek.jpg)
+![with Derek Sivers @ Ritz-Carlton Jakarta](/blog-images/derek.jpg)
 
 I'm very glad to have the chance to meet him. Instead of me conducting an interview about his works, I felt like the conversation we had truly reflect all his podcasts, writings, books, and music.
 
