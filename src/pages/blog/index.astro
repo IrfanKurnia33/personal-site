@@ -24,16 +24,32 @@ const pageCount = Math.ceil(posts.length / PER_PAGE);
       lead="Jotting down my screams, one sentence at a time."
     />
 
+    <div class="post-search">
+      <label for="post-search-input">Search posts by title</label>
+      <input
+        id="post-search-input"
+        type="search"
+        placeholder="Search by title"
+        autocomplete="off"
+      />
+    </div>
+
     {
       posts.length === 0 ? (
         <p>No posts yet — check back soon.</p>
       ) : (
         <div class="post-grid" data-per-page={PER_PAGE}>
           {posts.map((post, i) => (
-            <div class="post-item" data-index={i} hidden={i >= PER_PAGE}>
+            <div
+              class="post-item"
+              data-index={i}
+              data-title={post.data.title}
+              hidden={i >= PER_PAGE}
+            >
               <PostCard post={post} />
             </div>
           ))}
+          <p class="post-search__empty" hidden>No posts match that title.</p>
         </div>
       )
     }
@@ -65,33 +81,45 @@ const pageCount = Math.ceil(posts.length / PER_PAGE);
 </BaseLayout>
 
 <script>
+  const searchInput = document.querySelector<HTMLInputElement>(
+    "#post-search-input",
+  );
   const grid = document.querySelector<HTMLElement>(".post-grid");
   const pagination = document.querySelector<HTMLElement>(".pagination");
 
-  if (grid && pagination) {
+  if (grid) {
     const perPage = Number(grid.dataset.perPage) || 5;
     const items = Array.from(
       grid.querySelectorAll<HTMLElement>(".post-item"),
     );
-    const pageCount = Math.ceil(items.length / perPage);
-    const prevBtn =
-      pagination.querySelector<HTMLButtonElement>("[data-page-prev]");
-    const nextBtn =
-      pagination.querySelector<HTMLButtonElement>("[data-page-next]");
-    const numBtns = Array.from(
-      pagination.querySelectorAll<HTMLButtonElement>("[data-page-num]"),
+    const emptyMessage = grid.querySelector<HTMLElement>(".post-search__empty");
+    const prevBtn = pagination?.querySelector<HTMLButtonElement>(
+      "[data-page-prev]",
     );
+    const nextBtn = pagination?.querySelector<HTMLButtonElement>(
+      "[data-page-next]",
+    );
+    const numBtns = pagination
+      ? Array.from(
+          pagination.querySelectorAll<HTMLButtonElement>("[data-page-num]"),
+        )
+      : [];
 
     let current = 1;
+    let matchingItems = items;
 
     const render = () => {
+      const pageCount = Math.max(1, Math.ceil(matchingItems.length / perPage));
+      current = Math.min(current, pageCount);
       const start = (current - 1) * perPage;
       const end = start + perPage;
       items.forEach((item, i) => {
-        item.hidden = i < start || i >= end;
+        const matchIndex = matchingItems.indexOf(item);
+        item.hidden = matchIndex < start || matchIndex >= end;
       });
       numBtns.forEach((btn) => {
         const page = Number(btn.dataset.pageNum);
+        btn.hidden = page > pageCount;
         if (page === current) {
           btn.setAttribute("aria-current", "page");
         } else {
@@ -100,14 +128,24 @@ const pageCount = Math.ceil(posts.length / PER_PAGE);
       });
       if (prevBtn) prevBtn.disabled = current === 1;
       if (nextBtn) nextBtn.disabled = current === pageCount;
+      if (pagination) pagination.hidden = matchingItems.length <= perPage;
+      if (emptyMessage) emptyMessage.hidden = matchingItems.length > 0;
     };
 
     const goTo = (page: number) => {
-      current = Math.min(Math.max(page, 1), pageCount);
+      current = Math.max(page, 1);
       render();
       window.scrollTo({ top: 0, behavior: "smooth" });
     };
 
+    searchInput?.addEventListener("input", () => {
+      const query = searchInput.value.trim().toLocaleLowerCase();
+      matchingItems = items.filter((item) =>
+        (item.dataset.title ?? "").toLocaleLowerCase().includes(query),
+      );
+      current = 1;
+      render();
+    });
     prevBtn?.addEventListener("click", () => goTo(current - 1));
     nextBtn?.addEventListener("click", () => goTo(current + 1));
     numBtns.forEach((btn) =>
@@ -115,10 +153,27 @@ const pageCount = Math.ceil(posts.length / PER_PAGE);
         goTo(Number(btn.dataset.pageNum)),
       ),
     );
+    render();
   }
 </script>
 
 <style>
+  .post-search {
+    display: grid;
+    gap: var(--space-2xs);
+    max-width: 28rem;
+    margin-bottom: var(--space-l);
+  }
+  .post-search label {
+    font-weight: 600;
+  }
+  .post-search input {
+    width: 100%;
+    padding: var(--space-2xs) var(--space-s);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-s);
+    background: var(--surface);
+  }
   .post-grid {
     display: grid;
     grid-template-columns: 1;
