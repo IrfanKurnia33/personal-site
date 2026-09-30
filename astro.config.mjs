@@ -1,5 +1,6 @@
 // @ts-check
 import { defineConfig } from "astro/config";
+import { unified } from "@astrojs/markdown-remark";
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 import vercel from "@astrojs/vercel";
@@ -23,7 +24,7 @@ export default defineConfig({
   adapter: vercel(),
   integrations: [mdx(), sitemap()],
   markdown: {
-    rehypePlugins: [rehypeImageCaptions],
+    processor: unified({ rehypePlugins: [rehypeImageCaptions] }),
   },
 
   // Prefer inlined small stylesheets to cut requests on serverless deployments.

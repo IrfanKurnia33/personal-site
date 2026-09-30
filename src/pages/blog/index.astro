@@ -176,7 +176,7 @@ const pageCount = Math.ceil(posts.length / PER_PAGE);
   }
   .post-grid {
     display: grid;
-    grid-template-columns: 1;
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--space-m);
     /* grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr)); */
   }
